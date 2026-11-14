@@ -1,5 +1,5 @@
 // Offline cache for Gruppetto Legend. The version is replaced at build time.
-const VERSION = 'bd5b7aa312';
+const VERSION = 'cf7f05b636';
 const CACHE = 'gruppetto-legend-' + VERSION;
 const FILES = ['./', './index.html', './app.js?v=' + VERSION, './app.css?v=' + VERSION, './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png', './favicon.png'];
 
