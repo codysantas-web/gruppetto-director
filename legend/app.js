@@ -3936,10 +3936,18 @@ void main(){
   vec2 tp = uv*res;
   vec3 g = pow(c, vec3(0.82));
   g = (g - 0.5)*1.1 + 0.52;
-  g += bayer(tp)*0.09;
+  // 0.1.106 (Cody: "Some things are hard to see now with the pixels depending on the road color"): a wet road went to
+  // the darkest ink and the riders on it broke up into scattered dither. The darks are lifted a little so a dark road
+  // isn't the ink itself, and near things (riders, the road under them) are dithered less, so they stay solid shapes.
+  g += 0.07*(1. - smoothstep(0.04, 0.32, luma(g)));
+  float dz = lz(dep(uv));
+  g += bayer(tp)*0.09*mix(0.3, 1., smoothstep(12., 60., dz));
   vec3 col = nearest(clamp(g,0.,1.));
   float e = sky > 0.5 ? 0. : edge(uv, 1.0, 1., 0.0);
-  col = mix(col, PAL[0]/255., step(0.5, e));
+  // the outline is drawn on the far side of an edge (the road behind a rider): on a dark road dark ink vanishes, so
+  // there it is a light line
+  vec3 ink = luma(col) < 0.24 ? PAL[3]/255. : PAL[0]/255.;
+  col = mix(col, ink, step(0.5, e));
   gl_FragColor = vec4(col, 1.);
 #elif STYLE == 3
   // Poster: flat bands, ink outlines, halftone, paper
